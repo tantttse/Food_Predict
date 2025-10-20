@@ -24,8 +24,11 @@ async def predict(file: UploadFile = File(...), topk: int = 3, db: Session = Dep
 
     cached = redis_client.get(cache_key)
     if cached:
+        logger.info(f"Cache hit for key: {cache_key}")
         return JSONResponse(content=json.loads(cached))
 
+    logger.info(f"Cache miss for key: {cache_key}. Querying repository.")
+    
     # build fresh response
     dishes = []
     for result in results[:topk]:
